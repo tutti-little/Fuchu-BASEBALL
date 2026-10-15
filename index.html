@@ -188,6 +188,11 @@
             background: rgba(35,80,120,0.95);
             transform: translateY(-1px);
         }
+        .steal-btn.steal-selected {
+            background: rgba(25, 145, 85, 0.98);
+            border-color: #8cffbd;
+            box-shadow: 0 0 0 2px rgba(100,255,170,0.35);
+        }
 
         .steal-btn:disabled {
             opacity: 0.35;
@@ -330,10 +335,151 @@
             from { opacity: 1; }
             to { opacity: 0.3; }
         }
+
+        /* ===== タイトル画面 ===== */
+        #titleScreen {
+            position: fixed; inset: 0; z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; cursor: pointer;
+            background:
+                radial-gradient(ellipse at 50% 115%, #1c8a3e 0%, #0f5c2a 28%, rgba(8,30,20,0) 55%),
+                radial-gradient(ellipse at 50% 0%, #2a3f86 0%, #121c4a 45%, #070b22 100%);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        #titleScreen.ts-leaving { opacity: 0; transform: scale(1.12); pointer-events: none; }
+        #titleScreen.ts-gone { display: none; }
+        /* ナイター照明の光線 */
+        .ts-beam {
+            position: absolute; top: -10%; width: 34vmax; height: 130%;
+            background: linear-gradient(to bottom, rgba(255,245,200,0.34), rgba(255,245,200,0) 78%);
+            clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%);
+            transform-origin: 50% 0; mix-blend-mode: screen; opacity: 0.8;
+        }
+        .ts-beam.b1 { left: -8vmax;  animation: tsSweepA 7s ease-in-out infinite; }
+        .ts-beam.b2 { left: calc(50% - 17vmax); animation: tsSweepB 9s ease-in-out infinite; opacity: 0.55; }
+        .ts-beam.b3 { right: -8vmax; animation: tsSweepC 8s ease-in-out infinite; }
+        @keyframes tsSweepA { 0%,100% { transform: rotate(-16deg); } 50% { transform: rotate(-4deg); } }
+        @keyframes tsSweepB { 0%,100% { transform: rotate(6deg); }  50% { transform: rotate(-6deg); } }
+        @keyframes tsSweepC { 0%,100% { transform: rotate(16deg); } 50% { transform: rotate(4deg); } }
+        /* きらめき */
+        .ts-star { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #fff; opacity: 0; animation: tsTwinkle 3.2s ease-in-out infinite; }
+        @keyframes tsTwinkle { 0%,100% { opacity: 0; transform: scale(0.6); } 50% { opacity: 0.95; transform: scale(1.6); } }
+        /* グラウンドのダイヤモンド */
+        .ts-diamond {
+            position: absolute; left: 50%; bottom: -34vmin; width: 62vmin; height: 62vmin;
+            transform: translateX(-50%) rotate(45deg) scaleY(0.62);
+            border: 3px solid rgba(255,255,255,0.55);
+            background: rgba(200,140,80,0.35);
+            box-shadow: 0 0 40px rgba(255,255,255,0.18) inset;
+        }
+        /* 飛んでくるボール */
+        .ts-ball {
+            position: absolute; width: 74px; height: 74px; left: -12%; bottom: 8%;
+            animation: tsBallFly 4.6s cubic-bezier(.2,.7,.3,1) infinite;
+            filter: drop-shadow(0 0 14px rgba(255,255,255,0.7));
+        }
+        .ts-ball svg { width: 100%; height: 100%; animation: tsBallSpin 0.5s linear infinite; }
+        .ts-ball::after {
+            content: ''; position: absolute; right: 70%; top: 44%; width: 44vmin; height: 5px; border-radius: 4px;
+            background: linear-gradient(to left, rgba(255,255,255,0.85), rgba(255,255,255,0));
+        }
+        @keyframes tsBallFly {
+            0%   { transform: translate(0, 0) scale(0.5); opacity: 0; }
+            10%  { opacity: 1; }
+            70%  { transform: translate(78vw, -62vh) scale(1.15); opacity: 1; }
+            100% { transform: translate(112vw, -86vh) scale(0.7); opacity: 0; }
+        }
+        @keyframes tsBallSpin { to { transform: rotate(360deg); } }
+        /* 中身 */
+        .ts-content { position: relative; z-index: 2; text-align: center; padding: 0 20px; }
+        .ts-badge {
+            display: inline-block; padding: 5px 18px; margin-bottom: 14px;
+            font-size: clamp(11px, 2.2vmin, 16px); font-weight: 800; letter-spacing: 0.34em;
+            color: #ffd34d; border: 1px solid rgba(255,211,77,0.7); border-radius: 999px;
+            background: rgba(10,18,50,0.55); text-shadow: 0 0 10px rgba(255,211,77,0.8);
+            animation: tsFadeDown 0.9s ease both;
+        }
+        .ts-title {
+            margin: 0; line-height: 1.02; font-weight: 900; font-style: italic;
+            font-family: 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+            transform: skewX(-8deg);
+            filter: drop-shadow(0 5px 0 #0a1636) drop-shadow(0 0 22px rgba(255,190,40,0.65));
+            animation: tsTitleIn 1s cubic-bezier(.2,1.2,.3,1) both 0.15s;
+        }
+        .ts-title .t1 {
+            display: block; font-size: clamp(54px, 15vmin, 150px); letter-spacing: 0.06em;
+            background: linear-gradient(180deg, #fffbe6 0%, #ffe07a 35%, #ff9d1c 70%, #e55d0b 100%);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            -webkit-text-stroke: 2px #0a1636;
+        }
+        .ts-title .t2 {
+            display: block; font-size: clamp(34px, 9.6vmin, 96px); letter-spacing: 0.1em; margin-top: 2px;
+            background: linear-gradient(180deg, #ffffff 0%, #cfe6ff 45%, #6fb0ff 100%);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            -webkit-text-stroke: 2px #0a1636;
+        }
+        .ts-sub {
+            margin-top: 14px; font-size: clamp(11px, 2.4vmin, 18px); font-weight: 700; letter-spacing: 0.7em;
+            color: rgba(255,255,255,0.85); text-indent: 0.7em; animation: tsFadeUp 1s ease both 0.6s;
+        }
+        .ts-line { width: min(62vw, 520px); height: 3px; margin: 18px auto 0; border-radius: 3px;
+            background: linear-gradient(90deg, rgba(255,255,255,0), #ffd34d 30%, #ff7a1a 70%, rgba(255,255,255,0));
+            animation: tsLine 1s ease both 0.5s; }
+        .ts-start {
+            margin-top: clamp(26px, 6vmin, 52px); padding: 14px 46px; border: none; border-radius: 999px;
+            font-size: clamp(18px, 3.8vmin, 28px); font-weight: 900; letter-spacing: 0.22em; text-indent: 0.22em;
+            color: #2a1400; cursor: pointer;
+            background: linear-gradient(180deg, #fff3b0 0%, #ffc531 45%, #ff9400 100%);
+            box-shadow: 0 6px 0 #a24d00, 0 10px 28px rgba(255,150,0,0.55), 0 0 0 3px rgba(255,255,255,0.35) inset;
+            animation: tsPulse 1.4s ease-in-out infinite, tsFadeUp 1s ease both 0.9s;
+        }
+        .ts-start:active { transform: translateY(4px); box-shadow: 0 2px 0 #a24d00, 0 4px 16px rgba(255,150,0,0.5); }
+        .ts-hint {
+            margin-top: 22px; font-size: clamp(10px, 1.9vmin, 14px); color: rgba(255,255,255,0.7);
+            letter-spacing: 0.08em; line-height: 1.8; animation: tsFadeUp 1s ease both 1.1s;
+        }
+        .ts-hint b { color: #ffd34d; font-weight: 800; }
+        @keyframes tsTitleIn { from { opacity: 0; transform: skewX(-8deg) scale(1.5) translateY(-20px); } to { opacity: 1; transform: skewX(-8deg) scale(1) translateY(0); } }
+        @keyframes tsFadeUp   { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes tsFadeDown { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes tsLine { from { opacity: 0; transform: scaleX(0); } to { opacity: 1; transform: scaleX(1); } }
+        @keyframes tsPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.07); } }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
+    <!-- タイトル画面 -->
+    <div id="titleScreen">
+        <div class="ts-beam b1"></div><div class="ts-beam b2"></div><div class="ts-beam b3"></div>
+        <div class="ts-star" style="left:12%;top:14%;animation-delay:0s"></div>
+        <div class="ts-star" style="left:28%;top:30%;animation-delay:.8s"></div>
+        <div class="ts-star" style="left:44%;top:10%;animation-delay:1.6s"></div>
+        <div class="ts-star" style="left:63%;top:24%;animation-delay:.4s"></div>
+        <div class="ts-star" style="left:78%;top:12%;animation-delay:2.1s"></div>
+        <div class="ts-star" style="left:90%;top:34%;animation-delay:1.2s"></div>
+        <div class="ts-star" style="left:6%;top:46%;animation-delay:2.6s"></div>
+        <div class="ts-diamond"></div>
+        <div class="ts-ball">
+            <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="46" fill="#fffdf5" stroke="#d8d2c0" stroke-width="2"/>
+                <path d="M22 18 C38 34 38 66 22 82" fill="none" stroke="#d62828" stroke-width="3.5" stroke-linecap="round"/>
+                <path d="M78 18 C62 34 62 66 78 82" fill="none" stroke="#d62828" stroke-width="3.5" stroke-linecap="round"/>
+                <g stroke="#d62828" stroke-width="2.4" stroke-linecap="round">
+                    <path d="M25 27 l8 -2"/><path d="M30 38 l9 -1"/><path d="M32 50 l9 0"/><path d="M30 62 l9 1"/><path d="M25 73 l8 2"/>
+                    <path d="M75 27 l-8 -2"/><path d="M70 38 l-9 -1"/><path d="M68 50 l-9 0"/><path d="M70 62 l-9 1"/><path d="M75 73 l-8 2"/>
+                </g>
+            </svg>
+        </div>
+        <div class="ts-content">
+            <div class="ts-badge">3D&nbsp;PRO&nbsp;STYLE&nbsp;BATTING</div>
+            <h1 class="ts-title"><span class="t1">附中</span><span class="t2">ベースボール</span></h1>
+            <div class="ts-line"></div>
+            <div class="ts-sub">FUCHU&nbsp;BASEBALL</div>
+            <button id="titleStartBtn" class="ts-start" type="button">PLAY BALL!</button>
+            <div class="ts-hint">画面をタップ / <b>Enter</b> でスタート<br><b>S・D・F</b> 盗塁　<b>B</b> バント切替</div>
+        </div>
+    </div>
+
     <button id="audioBtn" title="Sound Switch">🔊</button>
     <button id="sensitivityBtn">感度: 高め (2.0x)</button>
     <button id="buntModeBtn" type="button">打撃: スイング</button>
@@ -1091,12 +1237,14 @@
         let buntYawCur = 0;      // バットの向き（方向に合わせて滑らかに動く）
         let buntBlend = 0;       // 0=通常の構え 〜 1=バントの構え（屈み＋バット水平）の補間値
         let balls = 0, strikes = 0, outs = 0, inning = 1, isTeamA = true, scoreA = 0, scoreB = 0, runners = [false, false, false];
+        let scoreAtCurrentPlayA = 0, scoreAtCurrentPlayB = 0; // 3アウト成立時に、そのプレー中の得点を取り消すための記録
         let pitchEval = false, wasStrike = false, hasBounced = false;
         let hitLaunchAngleDeg = null;
         let swungOnCurrentPitch = false; 
         let isFairConfirmed = false; 
         let foulSettling = false; // ファール確定後、ボールが自然に落下・バウンドして止まるまで演出を続ける
         let foulSettleFrames = 0;
+        let titleActive = true;   // タイトル画面の表示中（true の間はゲーム操作を受け付けない）
         let isDragging = false, dragStartX = 0, dragStartY = 0, cursorStartX = 0, cursorStartY = 0;
         
         let gameState = 'windup'; 
@@ -1113,6 +1261,7 @@ let endRunPlayActive = false;
         let battingScreenReadyAt = 0;
         let pitchGapActive = false;
         let pendingSwingInput = false;
+        let pitchTakebackProgress = 0; // 投球リリースに合わせた打者のテイクバック補間
 
         const camDefault = new THREE.Vector3(0.2, 2.0, 5.0);
         const camLookTarget = new THREE.Vector3(0.2, 1.0, 0.5);
@@ -1166,8 +1315,11 @@ let endRunPlayActive = false;
         const BUNT_POWER_PERFECT = 0.10;   // 芯でうまく殺した当たり（転がりが弱い。v90: 0.20）
         const BUNT_POWER_GOOD = 0.16;      // 普通のバント（v90: 0.30）
         const BUNT_POWER_POOR = 0.28;      // 詰まった／ずれた当たり（やや強めのゴロやフライになりやすい。v90: 0.46）
+        const BUNT_EDGE_START = 0.70;      // 当たり判定の端に近いとみなし始める位置（0=中心 〜 1=端。この位置を超えると打球が弱くなっていく）
+        const BUNT_EDGE_DAMPING = 0.55;    // 当たり判定のちょうど端に当たったときの打球の弱まり方（0=弱まらない、0.55なら45%の強さ）
         const BUNT_ANGLE_BASE = -0.04;     // バントの基本の打ち出し角（ほぼ水平〜わずかに下向き）
         const BUNT_ANGLE_Y = 0.60;         // バットの上側に当たるほど高く上がる／下側ほど地面に叩きつける（大きいほど打球角度の差が広がる。v95: 0.22）
+        const BUNT_OFFCENTER_X_GAIN = 1.6;  // 芯から横にズレたとき、打球が狙いからズレる量（右に当たれば右へ、左に当たれば左へ。大きいほどズレが大きい）
         const BUNT_SIDE_SCALE = 0.35;      // 当たりのズレによる左右の振れ幅（方向を決めたぶん、ズレは小さめ）
 
         // バントの構えのとき、バットだけでなく体全体がミートカーソルに合わせて動く
@@ -1227,6 +1379,7 @@ let endRunPlayActive = false;
         //   1 = ピッチャーが動き始めてから構えた     : 動き出しは同じ、速さは BUNT_INFIELD_CHASE_SPEED_WINDUP
         //   2 = ピッチャーがボールを放してから構えた : 動き出し BUNT_INFIELD_REACTION_LATE フレーム、速さは通常
         const BUNT_INFIELD_REACTION_LATE = 8;
+        const BUNT_CATCHER_REACTION = 8;         // 捕手の動き出しフレーム（構えたタイミングに関係なく共通。内野手は構えたタイミングで変わる）
         let buntStanceTier = null;   // 構え始めたときの区分（null = まだ構えていない）
         let buntPlayTier = 0;        // いまのバント打球に使う区分
         function currentBuntTimingTier() {
@@ -1245,7 +1398,9 @@ let endRunPlayActive = false;
         }
         function fielderReactionFramesLeft(f) {
             if (buntPlayActive && (f === buntCatcher || fielders.indexOf(f) < 5)) {
-                const reaction = (buntPlayTier === 2) ? BUNT_INFIELD_REACTION_LATE : BUNT_INFIELD_REACTION_FRAMES;
+                let reaction = (buntPlayTier === 2) ? BUNT_INFIELD_REACTION_LATE : BUNT_INFIELD_REACTION_FRAMES;
+                // 捕手の動き出しは、構えたタイミングに関係なく常に同じ
+                if (f === buntCatcher) reaction = BUNT_CATCHER_REACTION;
                 return Math.max(0, fielderReactionLeft - (FIELDER_REACTION_FRAMES - reaction));
             }
             return fielderReactionLeft;
@@ -1350,8 +1505,10 @@ let endRunPlayActive = false;
         function createPawaPlayer(isBatter, uniformColor) {
             const player = new THREE.Group();
 
-            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.2, 0.5, 16), new THREE.MeshLambertMaterial({ color: uniformColor }));
-            body.position.y = 0.35; 
+            const body = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 24), new THREE.MeshLambertMaterial({ color: isBatter ? 0x243b8a : uniformColor })); // 胴体を楕円体に。打者・走者の上半身ユニフォームは藍色
+            // 球体を軸ごとに伸縮し、短めで少し奥行きのある楕円体にする
+            body.scale.set(0.41, 0.44, 0.30);
+            body.position.y = 0.34; 
             body.castShadow = true;
             player.add(body);
 
@@ -1406,20 +1563,24 @@ let endRunPlayActive = false;
 
             const leftLegGroup = new THREE.Group();
             leftLegGroup.position.set(-0.15, 0.12, 0);
-            const leftLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.08, 0.24, 12), legMat);
+            const leftLeg = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 20), legMat);
+            // 足を円柱ではなく、丸みのある楕円体にする
+            leftLeg.scale.set(0.125, 0.22, 0.155);
             leftLeg.position.y = -0.05;
             leftLegGroup.add(leftLeg);
-            const leftShoe = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.08, 0.22), shoeMat);
+            const leftShoe = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.09, 0.245), shoeMat);
             leftShoe.position.set(0, -0.14, 0.04);
             leftLegGroup.add(leftShoe);
             player.add(leftLegGroup);
 
             const rightLegGroup = new THREE.Group();
             rightLegGroup.position.set(0.15, 0.12, 0);
-            const rightLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.08, 0.24, 12), legMat);
+            const rightLeg = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 20), legMat);
+            // 右足も丸みのある楕円体に統一
+            rightLeg.scale.set(0.125, 0.22, 0.155);
             rightLeg.position.y = -0.05;
             rightLegGroup.add(rightLeg);
-            const rightShoe = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.08, 0.22), shoeMat);
+            const rightShoe = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.09, 0.245), shoeMat);
             rightShoe.position.set(0, -0.14, 0.04);
             rightLegGroup.add(rightShoe);
             player.add(rightLegGroup);
@@ -1561,6 +1722,20 @@ let endRunPlayActive = false;
         let idleTimer = 0;
 
         let pitcherObj = null;
+        // 守備の選手（野手・塁上の守備・バント捕手）は全員右投げ。右手で投げて、左手にグラブをはめる。
+        const throwerObjs = [];
+        function attachGlove(obj) {
+            const glove = new THREE.Mesh(
+                new THREE.SphereGeometry(0.15, 16, 12),
+                new THREE.MeshLambertMaterial({ color: 0x7a4a22 })
+            );
+            glove.scale.set(1.0, 1.1, 0.85);
+            glove.position.set(0.03, 0.02, 0.06);
+            glove.castShadow = true;
+            obj.rightHand.add(glove);   // rightHand（+X側＝体の左手）がグラブ側
+            obj.glove = glove;
+            throwerObjs.push(obj);
+        }
         const fielders = [];
         const fPos = [
             [0, 0, -16.5], [9, 0, -12], [5, 0, -22], [-5, 0, -22], [-9, 0, -12], [-24.6, 0, -39.6], [0, 0, -48.4], [24.6, 0, -39.6]
@@ -1572,6 +1747,7 @@ let endRunPlayActive = false;
             fielderObj.group.lookAt(0, 0, 1.8);
             scene.add(fielderObj.group);
             fielders.push(fielderObj.group);
+            attachGlove(fielderObj);
             if (i === 0) pitcherObj = fielderObj;
         });
 
@@ -1590,6 +1766,7 @@ let endRunPlayActive = false;
             bmObj.group.lookAt(0, 0, i === 3 ? -16.5 : 1.8);
             bmObj.group.visible = false; // 最初は誰も置かない。送球が飛んだとき、その塁の野手だけを設置する
             scene.add(bmObj.group);
+            attachGlove(bmObj);
             basemen.push(bmObj);
         });
 
@@ -1601,6 +1778,7 @@ let endRunPlayActive = false;
         buntCatcherObj.group.position.copy(BUNT_CATCHER_START);
         buntCatcherObj.group.visible = false;
         scene.add(buntCatcherObj.group);
+        attachGlove(buntCatcherObj);
         const buntCatcher = buntCatcherObj.group;
         function activateBuntCatcher() {
             buntCatcher.position.copy(BUNT_CATCHER_START);
@@ -1629,9 +1807,9 @@ let endRunPlayActive = false;
         const FAIR_SIDE_SCALE = 0.80;      // 通常のスイングの打球の左右の振れを、この割合に縮める（小さいほどフェアゾーンに飛びやすい。1.0で従来どおり。バントは対象外）
         const TIMING_ANGLE_X = 1.1;        // タイミングのズレ（早い／遅い）による打球方向の振れ（小さいほどファウルになりにくい。元: 1.3）
         const SIDE_HIT_ANGLE = 0.65;       // 左右にズレたときの打球方向の振れ幅（大きいほど引っ張り／流しが強く出る。元: 0.50）
-        const OFFCENTER_Y_DAMPING = 0.50;  // 芯から上下にズレたときの打球速度の減衰（0=なし、大きいほど弱くなる。上下の端で速度が (1-この値) 倍になる）
+        const OFFCENTER_Y_DAMPING = 0.40;  // 芯から上下にズレたときの打球速度の減衰（0=なし、大きいほど弱くなる。上下の端で速度が (1-この値) 倍になる）
         const OFFCENTER_Y_CURVE = 1.3;     // 上下の減衰カーブ（1=直線的、大きいほど中央付近は減衰が小さく端で急に落ちる）
-        const OFFCENTER_X_DAMPING = 0.22;  // 芯から左右にズレたときの打球速度の減衰（上下より弱め）
+        const OFFCENTER_X_DAMPING = 0.16;  // 芯から左右にズレたときの打球速度の減衰（上下より弱め）
         const CONTACT_DIR = 1;             // 1: 上側=高い弾道 / -1: 上下を逆にする
         const GOOD_POWER_SCALE = 0.42;     // GOOD!時の打球パワー倍率（小さいほど伸びない。元: 0.50）
         // バットがボールに当たる判定の時間帯（スイング進行度。インパクトは0.42。元: 0.32〜0.52）
@@ -1640,12 +1818,15 @@ let endRunPlayActive = false;
         const HIT_WINDOW_START = 0.23;
         const HIT_WINDOW_END = 0.66;
         // ボールを「捉える」タイミングの許容幅（ボールが本塁を通る位置からの前後のズレ）
-        const PERFECT_TIMING = 0.16;       // これ以内なら PERFECT! になり得る（元: 0.22 → 0.28。さらに厳しく）
-        const POOR_TIMING = 0.82;          // これを超えると POOR CONTACT（GOOD!以上になる時間の許容幅。元: 0.52）
+        const TIMING_POWER_WEIGHT = 0.70;  // タイミングのズレが打球の強さに与える影響（元: 0.85。小さいほどズレに甘い）
+        const PERFECT_TIMING = 0.19;       // これ以内なら PERFECT! になり得る（元: 0.22 → 0.28。さらに厳しく）
+        const POOR_TIMING = 0.92;          // これを超えると POOR CONTACT（GOOD!以上になる時間の許容幅。元: 0.52）
         // 走者が先の塁を狙うかどうかの判断に使う数値
         const FIELDER_CHASE_SPEED = 0.13;        // 野手が打球に追いつく速さ（守備の追跡と同じ値）
         const FIELDER_TRANSFER_DELAY = 8;        // 捕ってから送球するまでのもたつき（フレーム）
         const RUNNER_ADVANCE_MARGIN = -25;       // 負の値ほど積極的。送球のほうがこのフレーム数以上速いと見込めるときだけ、2つ先を諦める（元: 1）
+        const BATTER_DOUBLE_DIST = 44;           // 打者がツーベースを狙い始める、最初のバウンドの飛距離（これ以下は単打。元: 18。大きいほど単打になりやすい）
+        const BATTER_TRIPLE_DIST = 68;           // 打者がスリーベースを狙い始める飛距離（フェンス際）
         const RUNNER_GO_DIST = 20;               // 走者が先の塁を狙い始める打球の飛距離（元: 28。小さいほど積極的）
         const RUNNER_GO_TWO_DIST = 32;           // 走者が2つ先の塁まで狙い始める飛距離（元: 45）
         const FLY_LINER_MIN_ANGLE_DEG = 7;          // この打ち出し角（度）以上の打球をフライ・ライナー扱いにして、走者をハーフウェイに出す
@@ -1656,9 +1837,11 @@ let endRunPlayActive = false;
         const TAG_FIELDER_SPEED = 0.11;    // タッチに向かう野手の走る速さ（1フレームあたり）
         const TAG_HOLD_FRAMES = 30;        // タッチの瞬間の見せ時間（フレーム）
         const SAFE_MARGIN = 0.0;           // セーフ判定の猶予（塁までの残り距離。0で塁に到達していなければアウト。元: 0.25）
+        const RUNNER_RUN_LEAN = 0.20;   // 走っているときの前傾の角度（rad。約11°。小さいほど上体が起きる）
         class GameRunner {
             constructor(color) {
                 this.obj = createPawaPlayer(true, color);
+                this.obj.group.rotation.order = 'YXZ';   // 向いた方向（Y）を基準に前へ傾ける
                 scene.add(this.obj.group);
                 this.obj.group.visible = false;
                 
@@ -1735,15 +1918,22 @@ let endRunPlayActive = false;
                     let dir = new THREE.Vector3().subVectors(endPt, startPt).normalize();
                     let runAngle = Math.atan2(dir.x, dir.z);
                     
-                    this.obj.group.rotation.set(holding ? 0 : 0.18, runAngle, 0);
+                    this.obj.group.rotation.set(holding ? 0 : RUNNER_RUN_LEAN, runAngle, 0);
                     
                     let currentPos = new THREE.Vector3().lerpVectors(startPt, endPt, p);
-                    let bounce = holding ? 0 : Math.abs(Math.sin(p * Math.PI * 6)) * 0.18;
+                    let bounce = holding ? 0 : Math.abs(Math.sin(p * Math.PI * 6)) * 0.22;
                     this.obj.group.position.set(currentPos.x, bounce, currentPos.z);
                     
-                    let armSwing = holding ? 0 : Math.sin(p * Math.PI * 12) * 0.45;
+                    let runCycle = p * Math.PI * 12;
+                    let armSwing = holding ? 0 : Math.sin(runCycle) * 0.24;
                     this.obj.leftHand.position.set(-0.35, 0.4 + armSwing, 0.15 + armSwing * 0.5);
                     this.obj.rightHand.position.set(0.35, 0.4 - armSwing, 0.15 - armSwing * 0.5);
+                    // 走塁中は左右の脚を交互に前後へ振る。ハーフウェイで止まったら脚も止める。
+                    const legSwing = holding ? 0 : Math.sin(runCycle) * 0.72;
+                    this.obj.leftLegGroup.rotation.x = legSwing;
+                    this.obj.rightLegGroup.rotation.x = -legSwing;
+                    this.obj.leftLegGroup.position.y = 0.12 + (holding ? 0 : Math.max(0, Math.sin(runCycle)) * 0.09);
+                    this.obj.rightLegGroup.position.y = 0.12 + (holding ? 0 : Math.max(0, -Math.sin(runCycle)) * 0.09);
 
                 } 
                 else if (this.currentSegment > this.targetSegment || (this.currentSegment === this.targetSegment && this.progress > 0)) {
@@ -1765,15 +1955,22 @@ let endRunPlayActive = false;
                     let dir = new THREE.Vector3().subVectors(startPt, endPt).normalize();
                     let runAngle = Math.atan2(dir.x, dir.z);
                     
-                    this.obj.group.rotation.set(0.12, runAngle, 0);
+                    this.obj.group.rotation.set(RUNNER_RUN_LEAN, runAngle, 0);
                     
                     let currentPos = new THREE.Vector3().lerpVectors(startPt, endPt, p);
-                    let bounce = Math.abs(Math.sin(p * Math.PI * 6)) * 0.15;
+                    let bounce = Math.abs(Math.sin(p * Math.PI * 6)) * 0.19;
                     this.obj.group.position.set(currentPos.x, bounce, currentPos.z);
 
-                    let armSwing = Math.sin(p * Math.PI * 12) * 0.35;
+                    let runCycle = p * Math.PI * 12;
+                    let armSwing = Math.sin(runCycle) * 0.20;
                     this.obj.leftHand.position.set(-0.35, 0.4 + armSwing, 0.15);
                     this.obj.rightHand.position.set(0.35, 0.4 - armSwing, 0.15);
+                    // 元の塁へ戻る動きでも脚を交互に前後へ動かす。
+                    const legSwing = Math.sin(runCycle) * 0.72;
+                    this.obj.leftLegGroup.rotation.x = legSwing;
+                    this.obj.rightLegGroup.rotation.x = -legSwing;
+                    this.obj.leftLegGroup.position.y = 0.12 + Math.max(0, Math.sin(runCycle)) * 0.09;
+                    this.obj.rightLegGroup.position.y = 0.12 + Math.max(0, -Math.sin(runCycle)) * 0.09;
                 }
                 else {
                     // タッチアップ：戻って塁を踏んだら、そのまま次の塁へスタートする
@@ -1800,6 +1997,10 @@ let endRunPlayActive = false;
                     }
                     this.obj.leftHand.position.set(-0.35, 0.4, 0.15);
                     this.obj.rightHand.position.set(0.35, 0.4, 0.15);
+                    this.obj.leftLegGroup.rotation.x = 0;
+                    this.obj.rightLegGroup.rotation.x = 0;
+                    this.obj.leftLegGroup.position.y = 0.12;
+                    this.obj.rightLegGroup.position.y = 0.12;
                 }
 
                 // 3塁→本塁のエンドラン／スクイズ：打者が当てたか（空振りで捕手の送球判定になるか）が決まるまでは、本塁で待たせる
@@ -2118,8 +2319,6 @@ let endRunPlayActive = false;
                 const runner3 = activeRunners.some(r => r.isActive && r.currentSegment === 3 && r.targetSegment === 3);
                 b3H.disabled = !canSteal || !runner3;
             }
-            const hasRunner = runner1 || runner2 || activeRunners.some(r => r.isActive && r.currentSegment === 3 && r.targetSegment === 3);
-
         }
 
         const SWING_MISS_JUDGE_Z = 2.4;          // 振った球（空振り・ボール球を振った）の判定を出すボールの位置（本塁は1.8。小さいほど早く判定が出る。見送りは4.5＝捕手のミット）
@@ -2127,6 +2326,7 @@ let endRunPlayActive = false;
         const STEAL_TIMING_MARGIN_MIN = 6;      // 送球と走者の到着の差（フレーム）の最小。あらかじめ決めた成功率どおりの結果になるよう、この差をつける
         const STEAL_TIMING_MARGIN_MAX = 14;     // 同じく最大（差はこの範囲でランダム）。小さいほど僅差の勝負になる
         const STEAL_THROW_MIN_FRAMES = 12;      // 送球にかかる最短のフレーム数
+        const STEAL_VANISH_DELAY_MS = 1400;     // 盗塁の結果が出てから、ボールを受けた野手・捕手・アウトになった走者が消えるまでの時間（ミリ秒。次の投球は2000ms後なので、それより短くする）
         const STEAL_CAM_HEIGHT = 3.2;       // 盗塁の送球を追うカメラの高さ
         const STEAL_CAM_BEHIND = 8.0;       // ボールの何m後ろ（本塁側）から見るか
         const STEAL_CAM_X_FOLLOW = 0.5;     // ボールの横位置にどれだけ追従するか（0〜1）
@@ -2233,24 +2433,24 @@ let endRunPlayActive = false;
 
         // --- 9. 投球リセット & ホームラン処理システム ---
         // 変化球の曲がり具合の倍率（1.0 = 元の曲がり、小さいほど曲がらない）
-        const BREAK_SCALE = 0.3;
+        const BREAK_SCALE = 0.27;
         // ストレート・スライダー・フォークの球速倍率（1.0 = 元の球速。カーブは対象外）
         const DISPLAY_KM_SCALE = 440;  // 画面に出る球速(km/h)の換算係数。大きいほど表示が速くなる（実際の球速には影響しない。元: 380）
         const SPEED_UP = 1.08;
         const STRAIGHT_EXTRA_SPEED_UP = 1.02; // ストレートだけさらに少し速く
         const FORK_EXTRA_SPEED_UP = 1.06;     // フォークだけさらに少し速く
         // ストレートのホップ（伸び）：終盤に上へ浮き上がる量と、浮き始める位置（投球区間の何割目から）
-        const HOP_RISE = 0.1;
-        const HOP_START = 0.4;
+        const HOP_RISE = 0.09;
+        const HOP_START = 0.37;
         // フォーク：ここまでほぼ真っ直ぐ・水平に来て、この割合を過ぎてから急に沈む（1に近いほど本塁付近で急に落ちる）
-        const FORK_BREAK_START = 0.78;
-        const FORK_SIDE_SCALE = 0.3;  // フォークの横移動の大きさ（1.0 = 元どおり。0 で横にまったく動かない。小さいほど真っ直ぐ来る）
-        const FORK_DROP_SCALE = 0.48; // 落差の大きさ（1.0で放った高さと狙いの高さの差ぶんそのまま沈む。小さいほど落差が小さい）
+        const FORK_BREAK_START = 0.73;
+        const FORK_SIDE_SCALE = 0.27; // フォークの横移動の大きさ（1.0 = 元どおり。0 で横にまったく動かない。小さいほど真っ直ぐ来る）
+        const FORK_DROP_SCALE = 0.44; // 落差の大きさ（1.0で放った高さと狙いの高さの差ぶんそのまま沈む。小さいほど落差が小さい）
         const pitchTypes = [
             // ストレートは一切曲がらず、狙った位置まで真っ直ぐ進む
             { name: "ストレート", speedMin: 0.25 * SPEED_UP * STRAIGHT_EXTRA_SPEED_UP, speedMax: 0.30 * SPEED_UP * STRAIGHT_EXTRA_SPEED_UP, curveX: 0, curveY: 0, straight: true },
-            { name: "カーブ", speedMin: 0.17, speedMax: 0.21, curveX: -0.0006 * BREAK_SCALE, curveY: -0.0008 * BREAK_SCALE },
-            { name: "スライダー", speedMin: 0.20 * SPEED_UP, speedMax: 0.24 * SPEED_UP, curveX: -0.0008 * BREAK_SCALE, curveY: -0.0002 * BREAK_SCALE, noRise: true },
+            { name: "カーブ", speedMin: 0.17, speedMax: 0.21, curveX: 0.0006 * BREAK_SCALE, curveY: -0.0008 * BREAK_SCALE },
+            { name: "スライダー", speedMin: 0.20 * SPEED_UP, speedMax: 0.24 * SPEED_UP, curveX: 0.0008 * BREAK_SCALE, curveY: -0.0002 * BREAK_SCALE, noRise: true },
             { name: "フォーク", speedMin: 0.18 * SPEED_UP * FORK_EXTRA_SPEED_UP, speedMax: 0.22 * SPEED_UP * FORK_EXTRA_SPEED_UP, curveX: 0, curveY: 0, lateBreak: true }
         ];
 
@@ -2299,11 +2499,17 @@ let endRunPlayActive = false;
             }, 5000);
         }
 
+        // ピッチャーの構え：体を三塁側へ向ける（右投げは、グラブ側の肩を本塁へ、体の正面を三塁側へ向けて立つ）。
+        // 0=本塁を向く、マイナス=三塁側（-π/2でほぼ真横）。投球動作では、この向きから本塁へ向き直りながら投げる。
+        const PITCHER_STANCE_YAW = -Math.PI * 0.45;
+        const PITCHER_FACE_3B_OFFSET = 0.20;   // 顔を、バッターの方向から三塁側へずらす量（rad。大きいほど三塁側を向く。0でバッターをまっすぐ見る）
+        const PITCHER_FACE_BATTER_YAW = Math.atan2(1.1, 18.3) - PITCHER_FACE_3B_OFFSET;   // ピッチャーの顔の向き（打席の方向から、少しだけ三塁側へ）
         function pitchBall() {
             // 結果表示を消して、ピッチャーとバッターが構える画面へ切り替える。
             // ここから「構えている時間」を1秒取ってから投球動作を始める。
             if (pitchGapActive) return;
             pitchGapActive = true;
+            hrCinematic = false;
             gameState = 'between_pitches';
             isDragging = false;
             isSwinging = false;
@@ -2323,6 +2529,9 @@ let endRunPlayActive = false;
         }
 
         function pitchBallStart() {
+            // このプレー開始時点の得点を記録。2アウトから3アウトになったプレーでは得点を認めない。
+            scoreAtCurrentPlayA = scoreA;
+            scoreAtCurrentPlayB = scoreB;
             // 打者がボールに当てたエンドランは、盗塁送球の決着待ちが起きないので待たずに終了する
             if (stealAnimation && stealAnimation.madeContact) endEndRunState();
             if (stealAnimation && !stealAnimation.finished) {
@@ -2388,9 +2597,11 @@ let endRunPlayActive = false;
                 b.group.visible = false; // 次のプレーまで非表示（送球時に設置）
             });
             
-            pitcherObj.group.rotation.y = Math.PI / 4;
-            pitcherObj.rightHand.position.set(0.35, 0.9, 0);
+            pitcherObj.group.rotation.y = PITCHER_STANCE_YAW;   // 体を三塁側へ向けて構える
+            pitcherObj.headGroup.rotation.y = PITCHER_FACE_BATTER_YAW - PITCHER_STANCE_YAW;   // 顔は最初からバッターのほうを見る
+            pitcherObj.leftHand.position.set(-0.35, 0.9, 0);
             windupProgress = 0;
+            pitchTakebackProgress = 0;
             
             let pType = pitchTypes[Math.floor(Math.random() * pitchTypes.length)];
             currentPitchType = pType.name;
@@ -2465,18 +2676,24 @@ let endRunPlayActive = false;
             // 実際の投球モーション（windup）を開始する。
             gameState = 'pre_pitch_wait';
             updateStealButtons();
+            // 走者が塁にいるときは、打者が構えてから投球動作に入るまでを長めにする。
+            // 走者なしなら従来どおり1秒、走者ありなら2秒待つ。
+            const prePitchWaitMs = runners.some(Boolean) ? 2000 : 1000;
             setTimeout(() => {
                 if (gameState === 'pre_pitch_wait') {
                     gameState = 'windup';
                     windupProgress = 0;
                     updateStealButtons();
                 }
-            }, 1000);
+            }, prePitchWaitMs);
         }
 
         function addOut(msg) {
             outs++; 
             if (outs >= 3) { 
+                // 3アウト目が成立したプレーでは得点を取り消す（このゲームでは3アウト目の得点を一律認めない）。
+                scoreA = scoreAtCurrentPlayA;
+                scoreB = scoreAtCurrentPlayB;
                 showTxt(msg + " チェンジ", "miss"); 
                 outs = 0; 
                 if (!isTeamA) inning++; 
@@ -2545,6 +2762,64 @@ let endRunPlayActive = false;
         }
 
         // fromPos の位置から、targetSeg の塁に立つ野手へ送球する（野手はこのとき設置される）
+        // --- 守備の送球動作（右投げ） ---
+        const THROW_RELEASE_FRAME = 8;     // 構えてから、ボールが手を離れるまでのフレーム数（この間ボールは右手の中。送球の所要時間には含まれる）
+        const THROW_ANIM_TOTAL = 20;       // 送球動作全体のフレーム数（フォロースルーまで）
+        const THROW_MIN_DIST = 4;          // これより近い送球は、ためを作らず従来どおりすぐ投げる
+        const THROW_REST_L = [-0.35, 0.4, 0.15];   // 右手（投げる手）の通常位置
+        const THROW_REST_R = [0.35, 0.4, 0.15];    // 左手（グラブ）の通常位置
+        function findThrowerObj(pos) { return throwerObjs.find(o => o.group.position === pos) || null; }
+        function startThrowAnim(obj, targetX, targetZ) {
+            obj.group.lookAt(targetX, 0, targetZ);   // 送球先へ体を向ける
+            obj.throwFrame = 0;
+        }
+        const _lerp = (a, b, u) => a + (b - a) * u;
+        const _ease = u => u * u * (3 - 2 * u);
+        function poseThrowHands(obj, f) {
+            const R = THROW_RELEASE_FRAME;
+            const cockL = [-0.42, 1.00, -0.42];    // 腕を後ろへ引いたところ（右手）
+            const relL  = [-0.22, 0.95, 0.95];     // リリース（右手）
+            const folL  = [-0.05, 0.35, 0.75];     // フォロースルー（右手が体の前を通って下りる）
+            const aimR  = [0.32, 0.80, 0.55];      // 投げる方向へ出すグラブ
+            const tuckR = [0.15, 0.55, 0.35];      // グラブを胸へ引き込む
+            let L, G, lean;
+            const mix = (A, B, u) => [_lerp(A[0], B[0], u), _lerp(A[1], B[1], u), _lerp(A[2], B[2], u)];
+            if (f < R - 3) {                        // 引く
+                const u = _ease(f / (R - 3));
+                L = mix(THROW_REST_L, cockL, u); G = mix(THROW_REST_R, aimR, u); lean = -0.12 * u;
+            } else if (f < R) {                     // 腕を振り出す
+                const u = _ease((f - (R - 3)) / 3);
+                L = mix(cockL, relL, u); G = mix(aimR, tuckR, u); lean = -0.12 + 0.42 * u;
+            } else {                                // フォロースルー → 元の位置
+                const u = Math.min(1, (f - R) / (THROW_ANIM_TOTAL - R));
+                if (u < 0.35) { L = mix(relL, folL, _ease(u / 0.35)); }
+                else { L = mix(folL, THROW_REST_L, _ease((u - 0.35) / 0.65)); }
+                G = mix(tuckR, THROW_REST_R, _ease(u)); lean = 0.30 * (1 - _ease(u));
+            }
+            obj.leftHand.position.set(L[0], L[1], L[2]);
+            obj.rightHand.position.set(G[0], G[1], G[2]);
+            obj.body.rotation.x = lean;
+        }
+        function updateThrowAnims() {
+            throwerObjs.forEach(o => {
+                if (o.throwFrame === undefined || o.throwFrame < 0) return;
+                if (o.throwFrame >= THROW_ANIM_TOTAL) {
+                    o.leftHand.position.set(THROW_REST_L[0], THROW_REST_L[1], THROW_REST_L[2]);
+                    o.rightHand.position.set(THROW_REST_R[0], THROW_REST_R[1], THROW_REST_R[2]);
+                    o.body.rotation.x = 0;
+                    o.throwFrame = -1;
+                    return;
+                }
+                poseThrowHands(o, o.throwFrame);
+                o.throwFrame++;
+            });
+        }
+        const _handWorld = new THREE.Vector3();
+        function placeBallInThrowHand(obj) {
+            obj.leftHand.getWorldPosition(_handWorld);
+            ball.position.copy(_handWorld);
+        }
+
         function startThrow(fromPos, throwRunner, throwTargetSegment, isOutfieldThrow) {
             const idx = Math.max(1, Math.min(4, throwTargetSegment)) - 1;
             const targetBaseman = basemen[idx];
@@ -2571,7 +2846,19 @@ let endRunPlayActive = false;
                 (targetPos.z - ball.position.z) / throwFrames
             );
 
+            // 投げる野手：右手を引いて振る。リリースまでボールは右手の中（送球全体の所要時間は変えない）
+            const throwerObj = findThrowerObj(fromPos);
+            let holdFrames = 0;
+            if (throwerObj && distToTarget >= THROW_MIN_DIST && throwFrames > THROW_RELEASE_FRAME + 4) {
+                holdFrames = THROW_RELEASE_FRAME;
+                startThrowAnim(throwerObj, targetPos.x, targetPos.z);
+                updateThrowAnims();           // 最初のポーズを即反映
+                placeBallInThrowHand(throwerObj);
+            }
+
             currentThrow = {
+                holdFrames: holdFrames,
+                throwerObj: throwerObj,
                 targetSegment: throwTargetSegment,
                 runner: throwRunner,
                 framesLeft: throwFrames,
@@ -2713,9 +3000,73 @@ let endRunPlayActive = false;
         }
 
         // --- 10. メインフレームアニメーション ---
+        const FOLLOW_THROUGH_HOLD_FRAMES = 5;    // 振り終わったフォロースルーの姿勢を保つ時間（フレーム。60fpsで約0.08秒。0で従来どおり。バットに当たったときは打者が走者に切り替わるので対象外）
+        // --- ホームラン確定演出 ---
+        // PERFECT! で打球角度が HR_CINEMATIC_MIN_ANGLE_DEG 以上、かつそのままフェンスを越えると分かる打球のとき、
+        // カメラをピッチャー側へ置いてバッターを映し、少しスローで見せる。
+        const HR_CINEMATIC_MIN_ANGLE_DEG = 25;  // この角度（度）以上で演出の対象
+        const HR_SLOW_FACTOR = 0.55;            // スローの度合い（1.0=通常速度、小さいほどゆっくり。打ってからホームランが確定するまでの間）
+        const HR_CAM_POS_Z = -9.0;              // カメラの位置（本塁からピッチャー側へ。マウンドは -16.5）
+        const HR_CAM_POS_Y = 2.0;               // カメラの高さ
+        const HR_CAM_SIDE_X = 3.5;              // 打球が飛ぶ側と反対へ、どれだけずらすか（打球がカメラの真上を通って視界が飛ぶのを避ける）
+        const HR_CAM_LOOK_LERP = 0.16;          // バッターを追う視線の滑らかさ（小さいほどゆったり追う）
+        let hrCinematic = false;
+        let hrSlowAccum = 0;
+        const hrCamPos = new THREE.Vector3();
+        const hrLookTarget = new THREE.Vector3();
+
+        // 打った直後の打球が、バウンドもフェンス直撃もせずにフェアのままスタンドへ入るかを、実際の打球の動きと同じ計算で先読みする
+        function predictHomeRunFlight(pos, vel) {
+            let px = pos.x, py = pos.y, pz = pos.z;
+            const vx = vel.x, vz = vel.z;
+            let vy = vel.y;
+            for (let t = 0; t < 600; t++) {
+                vy -= 0.0035;
+                px += vx; py += vy; pz += vz;
+                if (py < 0.1) return false;                       // 先に地面へ落ちる
+                const d = Math.hypot(px, pz - 1.8);
+                if (d >= fenceRadius - 1.0 && d <= fenceRadius + 1.5 && py < 10.0) return false;   // フェンスの高さに届かず当たる
+                if (d >= fenceRadius) return Math.abs(px) <= Math.abs(pz - 1.8);                   // フェンスを越えたとき、フェアか
+            }
+            return false;
+        }
+        function startHrCinematic() {
+            hrCinematic = true;
+            hrSlowAccum = 0;
+            const side = (ballVel.x >= 0) ? -1 : 1;
+            hrCamPos.set(side * HR_CAM_SIDE_X, HR_CAM_POS_Y, HR_CAM_POS_Z);
+            hrLookTarget.set(1.1, 1.0, 1.8); // 打者を映す
+        }
+        const hrBatterTarget = new THREE.Vector3(1.1, 1.0, 1.8);
+        function applyHrCinematicCamera() {
+            // 打球ではなくバッターを映す。打った直後は構えた位置、走り出したら走者になった打者を追う
+            if (batterRunner && batterRunner.isActive) {
+                const bp = batterRunner.obj.group.position;
+                hrBatterTarget.set(bp.x, 1.0, bp.z);
+            } else {
+                hrBatterTarget.set(1.1, 1.0, 1.8);
+            }
+            hrLookTarget.lerp(hrBatterTarget, HR_CAM_LOOK_LERP);
+            camera.position.copy(hrCamPos);
+            camera.lookAt(hrLookTarget);
+        }
+
         function animate() {
             requestAnimationFrame(animate);
 
+            // ホームラン確定演出のスロー：数フレームに1回だけ処理を進める（描画とカメラだけは毎フレーム更新）
+            if (hrCinematic && gameState === 'running') {
+                hrSlowAccum += HR_SLOW_FACTOR;
+                if (hrSlowAccum < 1) {
+                    applyHrCinematicCamera();
+                    renderer.render(scene, camera);
+                    drawFieldRadar();
+                    return;
+                }
+                hrSlowAccum -= 1;
+            }
+
+            updateThrowAnims();
             updateHitParticles();
 
             if (gameState === 'windup') {
@@ -2724,8 +3075,9 @@ let endRunPlayActive = false;
                     pitcherObj.group.position.y = Math.sin(windupProgress * Math.PI) * 0.35;
                 } else if (windupProgress < 1.4) {
                     let p = (windupProgress - 1.0) * 2.5;
-                    pitcherObj.group.rotation.y = (Math.PI / 4) * (1 - p);
-                    pitcherObj.rightHand.position.set(0.35, 0.9 - p * 0.5, p * 0.3);
+                    pitcherObj.group.rotation.y = PITCHER_STANCE_YAW * (1 - p);   // 三塁側向きから、腕を振りながら本塁（正面）へ向き直る
+                    pitcherObj.headGroup.rotation.y = PITCHER_FACE_BATTER_YAW - pitcherObj.group.rotation.y;   // 体が回っても、顔はバッターを見たまま
+                    pitcherObj.leftHand.position.set(-0.35, 0.9 - p * 0.5, p * 0.3);
                 } else {
                     gameState = 'pitching';
                     updateStealButtons();
@@ -2739,7 +3091,8 @@ let endRunPlayActive = false;
                     }
                     pitcherObj.group.position.y = 0;
                     pitcherObj.group.rotation.y = 0;
-                    pitcherObj.rightHand.position.set(0.35, 0.4, 0.15);
+                    pitcherObj.headGroup.rotation.y = PITCHER_FACE_BATTER_YAW;
+                    pitcherObj.leftHand.position.set(-0.35, 0.4, 0.15);
                     ball.position.copy(pendingPitch.pos);
                     ballVel.copy(pendingPitch.vel);
 
@@ -2748,6 +3101,12 @@ let endRunPlayActive = false;
                         const sa = stealAnimation;
                         const r = sa.runner;
                         sa.started = true;
+                        clearStealButtonSelection();
+                        (sa.extraRunners || []).forEach(extra => {
+                            extra.runner.holdProgress = null;
+                            extra.runner.targetSegment = extra.toBase;
+                            extra.runner.speed = RUNNER_SPEED * STEAL_RUNNER_SPEED_SCALE;
+                        });
                         r.startSegment = sa.fromBase;
                         r.currentSegment = sa.fromBase;
                         r.targetSegment = sa.toBase;
@@ -2789,7 +3148,8 @@ let endRunPlayActive = false;
                     }
                     ball.position.add(ballVel);
                 } else if (gameState !== 'steal_throwing') {
-                    ball.position.add(ballVel);
+                    // 野手が投げる動作のあいだ（リリース前）は、ボールは手の中
+                    if (!(gameState === 'throwing_to_base' && currentThrow && currentThrow.holdFrames > 0)) ball.position.add(ballVel);
                 }
             }
 
@@ -2848,7 +3208,15 @@ let endRunPlayActive = false;
                         }
                         ball.position.copy(from);
                         ballVel.set((target.x - from.x) / throwFrames, (target.y - from.y) / throwFrames, (target.z - from.z) / throwFrames);
-                        stealThrow = { runner: sa.runner, targetSegment: sa.toBase, targetPos: target, framesLeft: throwFrames, catcher, targetBaseman };
+                        // 捕手：右手を引いて投げる。リリースまでボールは右手の中（到着タイミングは変えない）
+                        let stealHold = 0;
+                        if (dist >= THROW_MIN_DIST && throwFrames > THROW_RELEASE_FRAME + 4) {
+                            stealHold = THROW_RELEASE_FRAME;
+                            startThrowAnim(catcher, target.x, target.z);
+                            updateThrowAnims();
+                            placeBallInThrowHand(catcher);
+                        }
+                        stealThrow = { runner: sa.runner, targetSegment: sa.toBase, targetPos: target, framesLeft: throwFrames, catcher, targetBaseman, holdFrames: stealHold };
                         gameState = 'steal_throwing';
                         document.getElementById('timingInfo').innerText = `捕手送球！ → ${stealBaseName(sa.toBase)}`;
                         document.getElementById('timingInfo').className = 'good';
@@ -2903,14 +3271,25 @@ let endRunPlayActive = false;
             if (gameState === 'steal_throwing' && stealThrow) {
                 const st = stealThrow;
                 const sa = stealAnimation;
-                ball.position.add(ballVel);
+                if (st.holdFrames > 0) {
+                    // リリース前：ボールは捕手の右手の中
+                    st.holdFrames--;
+                    placeBallInThrowHand(st.catcher);
+                    if (st.holdFrames === 0) {
+                        const rem = Math.max(1, st.framesLeft - 1);
+                        const tp = st.targetPos;
+                        ballVel.set((tp.x - ball.position.x) / rem, (tp.y - ball.position.y) / rem, (tp.z - ball.position.z) / rem);
+                    }
+                } else {
+                    ball.position.add(ballVel);
+                }
                 st.framesLeft--;
 
                 // カメラは捕手が投げたボールを追いかける（ボールの少し後ろ・上から見る）
                 camera.position.lerp(new THREE.Vector3(ball.position.x * STEAL_CAM_X_FOLLOW, STEAL_CAM_HEIGHT, ball.position.z + STEAL_CAM_BEHIND), STEAL_CAM_LERP);
                 camera.lookAt(ball.position.x, Math.max(0.8, ball.position.y), ball.position.z);
 
-                if (st.framesLeft <= 0 || ball.position.distanceTo(st.targetPos) < 0.55) {
+                if (st.framesLeft <= 0 || (st.holdFrames <= 0 && ball.position.distanceTo(st.targetPos) < 0.55)) {
                     ball.position.copy(st.targetPos);
                     ballVel.set(0, 0, 0);
                     sound.playCatch();
@@ -2940,14 +3319,42 @@ let endRunPlayActive = false;
                         } else {
                             r.judged = true;
                             r.isActive = false;
-                            r.obj.group.visible = false;
+                            // アウトの走者は、すぐには消さず少し見せてから消す（下の STEAL_VANISH_DELAY_MS 後）
+                            setTimeout(() => { r.obj.group.visible = false; }, STEAL_VANISH_DELAY_MS);
                             document.getElementById('timingInfo').innerText = `盗塁失敗！ ${stealBaseName(sa.fromBase)}→${stealBaseName(sa.toBase)} アウト！`;
                             document.getElementById('timingInfo').className = 'miss';
                             addOut(`盗塁失敗！ ${sa.fromBase}塁走者アウト`);
                         }
+                        // 同時に走った後続走者も、それぞれの盗塁結果を反映する
+                        (sa.extraRunners || []).forEach(extra => {
+                            const er = extra.runner;
+                            if (!er || !er.isActive) return;
+                            er.holdProgress = null;
+                            if (extra.success) {
+                                er.currentSegment = extra.toBase;
+                                er.startSegment = extra.toBase;
+                                er.targetSegment = extra.toBase;
+                                er.progress = 0;
+                                er.speed = RUNNER_SPEED;
+                                er.obj.group.position.copy(getPathCoord(extra.toBase));
+                                runners[extra.fromBase - 1] = false;
+                                if (extra.toBase <= 3) runners[extra.toBase - 1] = true;
+                                else { er.currentSegment = 4; er.targetSegment = 4; }
+                            } else {
+                                er.isActive = false;
+                                er.judged = true;
+                                runners[extra.fromBase - 1] = false;
+                                setTimeout(() => { er.obj.group.visible = false; }, STEAL_VANISH_DELAY_MS);
+                                addOut(`盗塁失敗！ ${extra.fromBase}塁走者アウト`);
+                            }
+                        });
                         document.getElementById('timingInfo').style.opacity = 1;
-                        st.catcher.group.visible = false;
-                        st.targetBaseman.group.visible = false;
+                        // 送球を受けた野手と捕手も、少し映してから消す
+                        const hideCatcher = st.catcher, hideBaseman = st.targetBaseman;
+                        setTimeout(() => {
+                            hideCatcher.group.visible = false;
+                            hideBaseman.group.visible = false;
+                        }, STEAL_VANISH_DELAY_MS);
                         updateUI();
                         updateStealButtons();
 
@@ -2966,8 +3373,19 @@ let endRunPlayActive = false;
                     camera.lookAt(targetPos);
 
                     currentThrow.framesLeft--;
+
+                    // リリースまではボールを右手に持たせ、手を離れた瞬間に、到着予定時刻に合わせて初速を決め直す
+                    if (currentThrow.holdFrames > 0) {
+                        currentThrow.holdFrames--;
+                        placeBallInThrowHand(currentThrow.throwerObj);
+                        if (currentThrow.holdFrames === 0) {
+                            const rem = Math.max(1, currentThrow.framesLeft);
+                            const tp = currentThrow.targetPos;
+                            ballVel.set((tp.x - ball.position.x) / rem, (tp.y - ball.position.y) / rem, (tp.z - ball.position.z) / rem);
+                        }
+                    }
                     
-                    if (currentThrow.framesLeft <= 0 || ball.position.distanceTo(currentThrow.targetPos) < 0.8) {
+                    if (currentThrow.framesLeft <= 0 || (currentThrow.holdFrames <= 0 && ball.position.distanceTo(currentThrow.targetPos) < 0.8)) {
                         let targetSeg = currentThrow.targetSegment;
                         let runner = currentThrow.runner;
                         sound.playCatch();
@@ -3176,12 +3594,26 @@ let endRunPlayActive = false;
                         // エンドラン中の走者は、ゴロでも走りを止めずに進塁する。
                         // 盗塁で設定した行き先をそのまま打球処理にも引き継ぐ。
                         if (endRunPlayActive && stealAnimation && r === stealAnimation.runner) {
+                            // エンドラン走者も打球の深さに応じて2つ以上先の塁を狙えるようにする。
+                            // これまでは盗塁予約時の行き先（通常は1つ先）で上限が固定されていた。
                             desiredTarget = Math.max(r.targetSegment, r.startSegment + 1);
+                            if (hitDist > RUNNER_GO_DIST) {
+                                let candidate = r.startSegment + (hitDist > RUNNER_GO_TWO_DIST ? 2 : 1);
+                                // 深い打球で次の次の塁を狙う場合のみ、送球に間に合いそうか確認する。
+                                if (candidate - r.startSegment >= 2) {
+                                    const runnerFrames = (candidate - r.locationValue) / RUNNER_SPEED;
+                                    const throwFrames = estimateThrowFrames(ball.position, candidate, isOutfield);
+                                    if (runnerFrames + RUNNER_ADVANCE_MARGIN >= throwFrames) {
+                                        candidate = r.startSegment + 1;
+                                    }
+                                }
+                                desiredTarget = Math.max(desiredTarget, candidate);
+                            }
                         } else if (r === batterRunner) {
                             // 打者自身の単打・二塁打・三塁打は、これまでどおり飛距離だけで決める
                             // （走者1人がフルに2〜3塁分走りきる時間は、送球の見積もりよりどうしても長くなりがちで、
                             //   送球との時間比較を入れると二塁打がほとんど成立しなくなってしまうため、打者にはこの安全確認を適用しない）
-                            desiredTarget = hitDist > 68 ? 3 : (hitDist > 18 ? 2 : 1); // 壁際に達したときの飛距離はだいたい67〜68.5に収まるため、これがほぼ実質的な上限
+                            desiredTarget = hitDist > BATTER_TRIPLE_DIST ? 3 : (hitDist > BATTER_DOUBLE_DIST ? 2 : 1); // 壁際に達したときの飛距離はだいたい67〜68.5に収まるため、これがほぼ実質的な上限
                         } else {
                             let isForced = false;
                             if (r.startSegment === 1) isForced = true;
@@ -3441,6 +3873,8 @@ let endRunPlayActive = false;
             }
 
             if (isSwinging) {
+                // テイクバックで引いた右足を、スイング動作の開始時に基準位置へ戻す。
+                pawaBatter.rightLegGroup.position.z = 0.16;
                 // スイングのイージング付き進化形アニメーション (0.0 〜 1.0)
                 // 自動バントは、ボールが通り過ぎるまでバットを構えたまま（進行を途中で止める）
                 if (buntAuto && gameState === 'pitching') swingProgress = Math.min(swingProgress, 0.40);
@@ -3626,7 +4060,7 @@ let endRunPlayActive = false;
                         // 上側 → 高く上がる / 中央 → ライナー / 下側 → 打球が地面へ向かいゴロになる
                         let launchAngleY = 0.22 + contactY * (contactY > 0 ? UPPER_HIT_ANGLE : LOWER_HIT_ANGLE);
                         let launchAngleX = (-dx * SIDE_HIT_ANGLE + timingAngleX) * FAIR_SIDE_SCALE; 
-                        let power = 0.90 + (0.35 - d) * 1.45 + (0.28 - timingDiff) * 0.85;
+                        let power = 0.90 + (0.35 - d) * 1.45 + (0.28 - timingDiff) * TIMING_POWER_WEIGHT;
                         // 高く上げるほどエネルギーが縦に逃げ、打球は詰まる（フライになっても飛びすぎない）
                         if (contactY > 0) power /= (1 + contactY * UPPER_HIT_DAMPING);
                         // 芯（バットの中心）からズレるほど打球速度が落ちる。特に上下のズレに強く効かせる
@@ -3652,9 +4086,15 @@ let endRunPlayActive = false;
                             // バント：バットを寝かせて当てるだけなので、打球は弱いゴロ。芯でうまく殺すほど転がりが弱い。
                             power = feedbackMsg === "PERFECT!" ? BUNT_POWER_PERFECT
                                   : (feedbackMsg === "GOOD!" ? BUNT_POWER_GOOD : BUNT_POWER_POOR);
+                            // バットの当たり判定のギリギリ（端）に当たったときは、打球を弱くする
+                            const edgeRatio = Math.max(Math.abs(dx) / (0.6 + forgive), Math.abs(dy) / (0.28 + forgive * 0.5)); // 0=中心 〜 1=当たり判定の端
+                            const edgeAmount = Math.max(0, Math.min(1, (edgeRatio - BUNT_EDGE_START) / (1 - BUNT_EDGE_START)));
+                            power *= (1 - BUNT_EDGE_DAMPING * edgeAmount);
                             launchAngleY = BUNT_ANGLE_BASE + contactY * BUNT_ANGLE_Y;
                             // 選んだ方向（三塁線／投手前／一塁線）へ転がす。当たりのズレぶんだけ少しばらつく
-                            launchAngleX = BUNT_DIRS[buntDirIndex].dir * BUNT_DIR_LAUNCH_X + (launchAngleX / FAIR_SIDE_SCALE) * BUNT_SIDE_SCALE; // バントは従来どおり（FAIR_SIDE_SCALE の縮小を戻す）
+                            // 横のズレ：バットの右側に当たれば狙いより右へ、左側に当たれば左へ転がる（dx = ボール − カーソル。+なら右）。
+                            // タイミングのズレによる振れは従来どおり小さめ。
+                            launchAngleX = BUNT_DIRS[buntDirIndex].dir * BUNT_DIR_LAUNCH_X + dx * BUNT_OFFCENTER_X_GAIN + timingAngleX * BUNT_SIDE_SCALE;
                         }
 
                         power = Math.max(isBunting ? 0.06 : 0.18, Math.min(2.30, power)); // バントは弱い当たりを許すため下限を下げる
@@ -3665,6 +4105,12 @@ let endRunPlayActive = false;
                             ballVel.y,
                             Math.hypot(ballVel.x, ballVel.z)
                         ) * 180 / Math.PI;
+
+                        // PERFECT! で打球角度が25度以上、かつホームランになる打球 → ホームラン確定演出（ピッチャー側のカメラ＋スロー）
+                        if (!isBunting && feedbackMsg === "PERFECT!" && hitLaunchAngleDeg >= HR_CINEMATIC_MIN_ANGLE_DEG &&
+                            predictHomeRunFlight(ball.position, ballVel)) {
+                            startHrCinematic();
+                        }
 
                         batterRunner = activeRunners.find(r => !r.isActive);
                         if (batterRunner) batterRunner.spawn(0, 1);
@@ -3721,7 +4167,8 @@ let endRunPlayActive = false;
                 }
 
                 // スイング完了リセット
-                if (p >= 1.0) {
+                // 通常のスイングは、振り終わったフォロースルーの姿勢のまま少し止めてから構えに戻る（バントは従来どおり）
+                if (p >= 1.0 && (isBunting || swingProgress >= 1.0 + FOLLOW_THROUGH_HOLD_FRAMES * 0.055)) {
                     const wasBunting = isBunting;
                     isSwinging = false;
                     swingProgress = 0;
@@ -3731,6 +4178,8 @@ let endRunPlayActive = false;
                     resetSwingTrail();
                     playerGroup.rotation.y = 0;
                     playerGroup.position.set(wasBunting ? 1.1 + buntBodyShiftCur : 1.1, 0, 1.8);
+                    pawaBatter.rightLegGroup.position.z = 0.16;
+                    pawaBatter.leftLegGroup.position.z = -0.16;
                     pawaBatter.rightLegGroup.rotation.set(0, BATTER_FOOT_YAW, 0);
                     pawaBatter.leftLegGroup.rotation.set(0, BATTER_FOOT_YAW, 0);
                     if (!wasBunting) {
@@ -3764,7 +4213,26 @@ let endRunPlayActive = false;
                 }
                 applyBuntCrouchParts(buntBlend);
                 pawaBatter.headGroup.rotation.y = BATTER_FACE_YAW + Math.sin(idleTimer * 1.5) * 0.03;
+
+                // 投手がボールをリリースしたら、打者は右足を少し後ろへ引いてテイクバック。
+                // スイング中・バント中は既存の打撃モーションを優先する。
+                if (gameState === 'pitching' && !isSwinging && !buntBlend) {
+                    pitchTakebackProgress = Math.min(1, pitchTakebackProgress + 0.12);
+                } else {
+                    pitchTakebackProgress = Math.max(0, pitchTakebackProgress - 0.10);
+                }
+                const load = pitchTakebackProgress * pitchTakebackProgress * (3 - 2 * pitchTakebackProgress);
+                pawaBatter.rightLegGroup.position.z = 0.16 + 0.13 * load;
+                pawaBatter.rightLegGroup.rotation.x = 0.08 * load;
+                pawaBatter.rightLegGroup.rotation.y = BATTER_FOOT_YAW + 0.14 * load;
+                if (!buntBlend) {
+                    armPivot.position.z = 0.15 + 0.07 * load;
+                    armPivot.position.x = -0.1 - 0.025 * load;
+                    batGroup.rotation.set(0.4 - 0.04 * load, -Math.PI / 3 - 0.12 * load, 0.8 + idleBatShake + 0.22 * load);
+                }
             }
+
+            if (hrCinematic && (gameState === 'running' || gameState === 'homerun')) applyHrCinematicCamera();
 
             renderer.render(scene, camera);
             drawFieldRadar();
@@ -3820,27 +4288,74 @@ let endRunPlayActive = false;
             }
         }
 
-        // 盗塁ボタンは1回触るだけ。押すと盗塁＋エンドランを予約し、
-        // ピッチャーの投球開始と同時に走者と打者が動き出す。
-        function setupStealButton(buttonId, fromBase, toBase, successRate) {
+        // 盗塁ボタンはクリック後も選択状態を維持。次の盗塁ボタンを押すと走者を追加する。
+        const heldStealButtons = new Set();
+        function clearStealButtonSelection() {
+            heldStealButtons.clear();
+            document.querySelectorAll('#stealControls .steal-btn').forEach(btn => btn.classList.remove('steal-selected'));
+        }
+        const stealButtonInfo = {
+            steal12Btn: { from: 1, to: 2, rate: 0.50 },
+            steal23Btn: { from: 2, to: 3, rate: 0.10 },
+            steal3HBtn: { from: 3, to: 4, rate: 0.0 }
+        };
+        function addRunnerToStealAnimation(info) {
+            if (!stealAnimation || stealAnimation.finished) return false;
+            const runner = activeRunners.find(r => r.isActive && r.currentSegment === info.from && r.targetSegment === info.from);
+            if (!runner) {
+                showTxt(`${info.from}塁に走者がいません`, 'miss');
+                return false;
+            }
+            if (stealAnimation.runner === runner || (stealAnimation.extraRunners || []).some(x => x.runner === runner)) return true;
+            if (!stealAnimation.extraRunners) stealAnimation.extraRunners = [];
+            stealAnimation.extraRunners.push({
+                runner,
+                fromBase: info.from,
+                toBase: info.to,
+                success: Math.random() < info.rate
+            });
+            // 投球開始前ならメイン走者と一緒にスタート、投球開始後ならその場で走り出す。
+            if (stealAnimation.started) {
+                runner.holdProgress = null;
+                runner.targetSegment = info.to;
+                runner.speed = RUNNER_SPEED * STEAL_RUNNER_SPEED_SCALE;
+                runner.judged = false;
+                runner.obj.group.visible = true;
+            }
+            showTxt('複数盗塁！ 走者が同時にスタート！', 'good');
+            return true;
+        }
+        function setupStealButton(buttonId) {
             const btn = document.getElementById(buttonId);
             if (!btn) return;
             btn.addEventListener('pointerdown', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
+                e.preventDefault(); e.stopPropagation();
                 if (e.button !== undefined && e.button !== 0) return;
-                attemptSteal(fromBase, toBase, successRate);
+                const info = stealButtonInfo[buttonId];
+                // ほかの盗塁ボタンが押されたままなら、現在の盗塁に走者を追加する。
+                const anotherButtonSelected = [...heldStealButtons].some(id => id !== buttonId);
+                heldStealButtons.add(buttonId);
+                btn.classList.add('steal-selected');
+                if (anotherButtonSelected && stealAnimation && !stealAnimation.finished) {
+                    addRunnerToStealAnimation(info);
+                } else if (!stealAnimation) {
+                    attemptSteal(info.from, info.to, info.rate);
+                }
             });
+            // pointerupでは選択解除しない。次のボタンを押すまで選択状態を維持する。
             btn.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); }, { passive: false });
             btn.addEventListener('mousedown', (e) => e.stopPropagation());
         }
-
-        setupStealButton('steal12Btn', 1, 2, 0.50);
-        setupStealButton('steal23Btn', 2, 3, 0.10);
-        setupStealButton('steal3HBtn', 3, 4, 0.0);   // 3塁→本塁：成功率0%。打者が当てたとき（スクイズ／エンドラン）だけ得点のチャンス
+        setupStealButton('steal12Btn');
+        setupStealButton('steal23Btn');
+        setupStealButton('steal3HBtn');
 
         window.addEventListener('keydown', (e) => {
             if (e.repeat) return;
+            if (titleActive) {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); startFromTitle(); }
+                return;
+            }
             if (e.key.toLowerCase() === 's') attemptSteal(1, 2, 0.50);
             if (e.key.toLowerCase() === 'd') attemptSteal(2, 3, 0.10);
             if (e.key.toLowerCase() === 'f') attemptSteal(3, 4, 0.0);
@@ -3848,6 +4363,7 @@ let endRunPlayActive = false;
         });
 
         window.addEventListener('mousedown', (e) => {
+            if (titleActive) return;
             if (e.target.closest && e.target.closest('.steal-btn')) return;
             handlePointerStart(e.clientX, e.clientY);
         });
@@ -3855,6 +4371,7 @@ let endRunPlayActive = false;
         window.addEventListener('mouseup', handlePointerEnd);
 
         window.addEventListener('touchstart', (e) => {
+            if (titleActive) return;   // タイトル画面では通常のタップ（クリック）として扱う
             if (e.target.closest && e.target.closest('.steal-btn')) return;
             if (e.touches.length > 0) {
                 if (e.cancelable) e.preventDefault();
@@ -3870,6 +4387,7 @@ let endRunPlayActive = false;
         }, { passive: false });
 
         window.addEventListener('touchend', (e) => {
+            if (titleActive) return;
             if (e.cancelable) e.preventDefault();
             handlePointerEnd();
         });
@@ -3879,7 +4397,19 @@ let endRunPlayActive = false;
         adjustCameraParameters();
         camera.position.copy(camDefault);
         camera.lookAt(camLookTarget);
-        pitchBall();
+
+        // タイトル画面：スタートするまでは投球を始めない（スタート操作で音声も有効にする）
+        gameState = 'between_pitches';
+        function startFromTitle() {
+            if (!titleActive) return;
+            titleActive = false;
+            try { sound.init(); } catch (err) {}
+            const ts = document.getElementById('titleScreen');
+            ts.classList.add('ts-leaving');
+            setTimeout(() => ts.classList.add('ts-gone'), 750);
+            pitchBall();
+        }
+        document.getElementById('titleScreen').addEventListener('click', startFromTitle);
         animate();
     </script>
 </body>
